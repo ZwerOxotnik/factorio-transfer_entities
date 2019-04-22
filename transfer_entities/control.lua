@@ -3,7 +3,7 @@
 Copyright (c) 2019 ZwerOxotnik <zweroxotnik@gmail.com>
 Licensed under the MIT licence;
 Author: ZwerOxotnik
-Version: 1.0.0 (2019.03.09)
+Version: 1.0.1 (2019.04.22)
 
 Description: allows to transfer entities to other teams
 
@@ -14,7 +14,7 @@ Homepage: https://forums.factorio.com/viewtopic.php?f=190&t=67245
 
 ]]--
 
-local	transfer_entities_tool = require("shared").transfer_entities_tools.transfer_entities_tool
+local transfer_entities_tool = require("shared").transfer_entities_tools.transfer_entities_tool
 local data =
 {
 	players = {}
@@ -22,17 +22,47 @@ local data =
 
 local gui = require("transfer_entities/gui")
 local module = {}
-module.version = "1.0.0"
+module.events = {}
+module.version = "1.0.1"
 
-local function init()
-  global.transfer_entities = data
+local get_event
+if event_listener then
+	get_event = function(event)
+		return defines.events[event] or event
+	end
+else
+	get_event = function(event)
+		if type(event) == "number" then
+			return event
+		else
+			return defines.events[event]
+		end
+	end
 end
 
-local function load()
+-- This function for compatibility with "Event listener" module and into other modules
+local function put_event(event, func)
+	event = get_event(event)
+	if event then
+		module.events[event] = func
+		return true
+	else
+		log("That event is nil")
+		-- error("That event is nil")
+	end
+	return false
+end
+
+module.on_init = function()
+  	global.transfer_entities = data
+end
+
+module.on_load = function()
 	data = global.transfer_entities
 end
 
 local function delete_selected_entities(event)
+	if not data.players[event.player_index] then return end
 	data.players[event.player_index].transfer_entities = nil
 	local player = game.players[event.player_index]
 	if not (player and player.valid) then return end
@@ -116,21 +146,17 @@ local function on_runtime_mod_setting_changed(event)
 	end
 end
 
-module.events = {
-	on_init = init,
-	on_load = load,
-	-- on_configuration_changed = on_configuration_changed,
-	on_gui_click = gui.on_gui_click,
-	-- on_gui_selection_state_changed = gui.on_gui_selection_state_changed,
-	on_player_removed = delete_player_data,
-	on_player_died = delete_selected_entities,
-	on_player_created = on_player_created,
-	on_player_joined_game = on_player_joined_game,
-	on_player_left_game = delete_selected_entities,
-	on_player_changed_force = delete_selected_entities,
-	on_player_changed_surface = delete_selected_entities,
-	on_player_selected_area = check_selected_enities,
-	on_runtime_mod_setting_changed = on_runtime_mod_setting_changed
-}
+-- put_event("on_configuration_changed", on_configuration_changed)
+put_event("on_gui_click", gui.on_gui_click)
+-- put_event("on_gui_selection_state_changed", gui.on_gui_selection_state_changed)
+put_event("on_player_removed", delete_player_data)
+put_event("on_player_died", delete_selected_entities)
+put_event("on_player_created", on_player_created)
+put_event("on_player_joined_game", on_player_joined_game)
+put_event("on_player_left_game", delete_selected_entities)
+put_event("on_player_changed_force", delete_selected_entities)
+put_event("on_player_changed_surface", delete_selected_entities)
+put_event("on_player_selected_area", check_selected_enities)
+put_event("on_runtime_mod_setting_changed", on_runtime_mod_setting_changed)
 
 return module
