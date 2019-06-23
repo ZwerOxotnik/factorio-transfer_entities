@@ -3,9 +3,7 @@
 Copyright (c) 2019 ZwerOxotnik <zweroxotnik@gmail.com>
 Licensed under the MIT licence;
 Author: ZwerOxotnik
-Version: 1.0.1 (2019.04.22)
-
-Description: allows to transfer entities to other teams
+Version: 1.0.2 (2019.06.23)
 
 You can write and receive any information on the links below.
 Source: https://gitlab.com/ZwerOxotnik/transfer_entities
@@ -23,7 +21,7 @@ local data =
 local gui = require("transfer_entities/gui")
 local module = {}
 module.events = {}
-module.version = "1.0.1"
+module.version = "1.0.2"
 
 local get_event
 if event_listener then
@@ -54,7 +52,7 @@ local function put_event(event, func)
 end
 
 module.on_init = function()
-  	global.transfer_entities = data
+	global.transfer_entities = data
 end
 
 module.on_load = function()
