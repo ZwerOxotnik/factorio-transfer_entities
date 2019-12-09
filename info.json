@@ -1,10 +1,10 @@
 {
   "name": "transfer_entities",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "title": "Transfer of entities",
   "author": "ZwerOxotnik",
   "contact": "zweroxotnik@gmail.com, Discord:ZwerOxotnik#7117",
-  "homepage": "https://forums.factorio.com/viewtopic.php?f=190&t=67245",
+  "homepage": "https://www.reddit.com/r/ZwerOxotnik/",
   "dependencies": ["event-listener >= 0.8.0"],
   "description": "Allows players transfers entities to other teams",
   "source": "https://gitlab.com/ZwerOxotnik/transfer_entities",
