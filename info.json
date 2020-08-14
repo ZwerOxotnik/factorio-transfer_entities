@@ -1,6 +1,6 @@
 {
   "name": "transfer_entities",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "title": "Transfer of entities",
   "author": "ZwerOxotnik",
   "contact": "zweroxotnik@gmail.com, Discord:ZwerOxotnik#7117",
@@ -8,5 +8,5 @@
   "dependencies": ["event-listener >= 0.8.0"],
   "description": "Allows players transfers entities to other teams",
   "source": "https://gitlab.com/ZwerOxotnik/transfer_entities",
-  "factorio_version":"1.0"
+  "factorio_version":"0.18"
 }
