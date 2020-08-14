@@ -3,11 +3,6 @@
 Read this in another language | [English](/README.md) | [Русский](/docs/ru/README.md)
 |---|---|---|
 
-## Quick Links
-
-[Changelog](CHANGELOG.md) | [Contributing](CONTRIBUTING.md)
-|---|---|
-
 ## Contents
 
 * [Overview](#overview)
