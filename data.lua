@@ -1,4 +1,4 @@
--- Copyright (c) 2019 ZwerOxotnik <zweroxotnik@gmail.com>
+-- Copyright (c) 2019-2021 ZwerOxotnik <zweroxotnik@gmail.com>
 -- Licensed under the MIT licence;
 
 local util = require("data/util/te_util")
@@ -29,7 +29,7 @@ local select_units_shortcut =
 	type = "shortcut",
 	name = tools.transfer_entities_shortcut,
 	order = "y",
-	action = "create-blueprint-item",
+	action = "spawn-item",
 	localised_name = {"item-name." .. tools.transfer_entities_tool},
 	item_to_create = tools.transfer_entities_tool,
 	style = "blue",
