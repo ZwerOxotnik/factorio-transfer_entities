@@ -1,6 +1,6 @@
 --[[
 
-Copyright (c) 2019 ZwerOxotnik <zweroxotnik@gmail.com>
+Copyright (c) 2019, 2021 ZwerOxotnik <zweroxotnik@gmail.com>
 Licensed under the MIT licence;
 Author: ZwerOxotnik
 Version: 1.0.2 (2019.06.23)

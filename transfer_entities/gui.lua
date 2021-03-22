@@ -1,4 +1,4 @@
--- Copyright (c) 2019 ZwerOxotnik <zweroxotnik@gmail.com>
+-- Copyright (c) 2019, 2021 ZwerOxotnik <zweroxotnik@gmail.com>
 -- Licensed under the MIT licence;
 
 local module = {}
