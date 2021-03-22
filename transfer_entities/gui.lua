@@ -36,23 +36,23 @@ module.create_gui = function(player)
     if #forces == 0 then
         local message = {"transfer_entities.forces-not-found"}
         local color = {1, 1, 0}
-        local character = player.character
-        if character then
-            rendering.draw_text{
-                text = message,
-                scale = 0.85,
-                surface = character.surface,
-                target = character,
-                target_offset = {0.5, -1.5},
-                color = {1, 1, 0},
-                time_to_live = 230,
-                players = {game.player},
-                alignment = "left",
-                scale_with_zoom = true
-            }
-        else
+        -- local character = player.character
+        -- if character then
+        --     rendering.draw_text{
+        --         text = message,
+        --         scale = 0.85,
+        --         surface = character.surface,
+        --         target = character,
+        --         target_offset = {0.5, -1.5},
+        --         color = {1, 1, 0},
+        --         time_to_live = 230,
+        --         players = {game.player},
+        --         alignment = "left",
+        --         scale_with_zoom = true
+        --     }
+        -- else
             player.print(message, color)
-        end
+        -- end
         module.destroy_gui(player)
         global.transfer_entities.players[player.index].transfer_entities = nil
         return
@@ -104,23 +104,23 @@ module.on_gui_click = function(event)
         if not new_force then
             local message = {"transfer_entities.forces-not-found"}
             local color = {1, 1, 0}
-            local character = player.character
-            if character then
-                rendering.draw_text{
-                    text = message,
-                    scale = 0.85,
-                    surface = character.surface,
-                    target = character,
-                    target_offset = {0.5, -1.5},
-                    color = {1, 1, 0},
-                    time_to_live = 230,
-                    players = {game.player},
-                    alignment = "left",
-                    scale_with_zoom = true
-                }
-            else
+            -- local character = player.character
+            -- if character then
+            --     rendering.draw_text{
+            --         text = message,
+            --         scale = 0.85,
+            --         surface = character.surface,
+            --         target = character,
+            --         target_offset = {0.5, -1.5},
+            --         color = {1, 1, 0},
+            --         time_to_live = 230,
+            --         players = {game.player},
+            --         alignment = "left",
+            --         scale_with_zoom = true
+            --     }
+            -- else
                 player.print(message, color)
-            end
+            -- end
             return
         end
 

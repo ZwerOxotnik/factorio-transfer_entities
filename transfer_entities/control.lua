@@ -3,7 +3,6 @@
 Copyright (c) 2019, 2021 ZwerOxotnik <zweroxotnik@gmail.com>
 Licensed under the MIT licence;
 Author: ZwerOxotnik
-Version: 1.0.2 (2019.06.23)
 
 You can write and receive any information on the links below.
 Source: https://gitlab.com/ZwerOxotnik/transfer_entities
@@ -11,6 +10,8 @@ Mod portal: https://mods.factorio.com/mod/transfer_entities
 Homepage: https://forums.factorio.com/viewtopic.php?f=190&t=67245
 
 ]]--
+
+-- TODO: remove/replace "Event listener" mod with "zk-lib" etc
 
 local transfer_entities_tool = require("shared").transfer_entities_tools.transfer_entities_tool
 local data =
@@ -21,7 +22,6 @@ local data =
 local gui = require("transfer_entities/gui")
 local module = {}
 module.events = {}
-module.version = "1.0.2"
 
 local get_event
 if event_listener then
@@ -80,30 +80,30 @@ local function check_selected_enities(event)
 	if not player.admin and #entities > max_entities then
 		local message = {"transfer_entities.too-much-entities", max_entities}
 		local color = {1, 1, 0}
-		local character = player.character
-		if character then
-			rendering.draw_text{
-				text = message,
-				scale = 0.85,
-				surface = character.surface,
-				target = character,
-				target_offset = {0.5, -1.5},
-				color = {1, 1, 0},
-				time_to_live = 230,
-				players = {game.player},
-				alignment = "left",
-				scale_with_zoom = true
-			}
-		else
+		-- local character = player.character
+		-- if character then
+		-- 	rendering.draw_text{
+		-- 		text = message,
+		-- 		scale = 0.85,
+		-- 		surface = character.surface,
+		-- 		target = character,
+		-- 		target_offset = {0.5, -1.5},
+		-- 		color = {1, 1, 0},
+		-- 		time_to_live = 230,
+		-- 		players = {game.player},
+		-- 		alignment = "left",
+		-- 		scale_with_zoom = true
+		-- 	}
+		-- else
 			player.print(message, color)
-		end
+		-- end
 		return
 	end
 
 	data.players[event.player_index].transfer_entities = {}
 	local transfer_entities = data.players[event.player_index].transfer_entities
 	for entity_number, entity in pairs(entities) do
-		if entity.valid and entity.type ~= "player" then
+		if entity.valid and entity.type ~= "character" then
 			transfer_entities[entity_number] = entity
 		end
 	end
