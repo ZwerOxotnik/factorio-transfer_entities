@@ -1,15 +1,15 @@
--- Copyright (c) 2019, 2021 ZwerOxotnik <zweroxotnik@gmail.com>
+-- Copyright (c) 2019, 2021, 2024 ZwerOxotnik <zweroxotnik@gmail.com>
 -- Licensed under the MIT licence;
 
-local module = {}
+local M = {}
 
-module.destroy_gui = function(player)
+M.destroy_gui = function(player)
     local frame = player.gui.left.transfer_entities_frame
     if not frame then return end
     frame.destroy()
 end
 
-module.create_gui = function(player)
+M.create_gui = function(player)
     -- Find forces
     local forces = {}
     local is_check_online = settings.global["TE-only_online_force"].value
@@ -53,12 +53,12 @@ module.create_gui = function(player)
         -- else
             player.print(message, color)
         -- end
-        module.destroy_gui(player)
-        global.transfer_entities.players[player.index].transfer_entities = nil
+        M.destroy_gui(player)
+        storage.transfer_entities.players[player.index].transfer_entities = nil
         return
     end
 
-    module.destroy_gui(player)
+    M.destroy_gui(player)
     -- Create gui
     local left = player.gui.left
     local frame = left.add{type = 'frame', name = 'transfer_entities_frame', caption = {"mod-name.transfer_entities"}}
@@ -85,19 +85,19 @@ module.create_gui = function(player)
     button.style.right_padding = 0
 end
 
-module.on_gui_click = function(event)
+M.on_gui_click = function(event)
     -- Validation of data
 	local gui = event.element
 	if not (gui and gui.valid) then return end
-	local player = game.players[event.player_index]
+	local player = game.get_player(event.player_index)
 	if not (player and player.valid) then return end
 	local parent = gui.parent
     if not parent then return end
     if parent.name ~= "main_table" then return end
 
     if gui.name == "X" then
-        global.transfer_entities.players[player.index].transfer_entities = nil
-        module.destroy_gui(player)
+        storage.transfer_entities.players[player.index].transfer_entities = nil
+        M.destroy_gui(player)
     elseif gui.name == "transfer_entities" then
         local drop_down = parent.to_force
         local new_force = game.forces[drop_down.items[drop_down.selected_index]]
@@ -125,24 +125,24 @@ module.on_gui_click = function(event)
         end
 
         -- Set new force
-        local transfer_entities = global.transfer_entities.players[player.index].transfer_entities
+        local transfer_entities = storage.transfer_entities.players[player.index].transfer_entities
         for _, entity in pairs(transfer_entities) do
             entity.force = new_force
         end
         transfer_entities = nil
-        module.destroy_gui(player)
+        M.destroy_gui(player)
     end
 end
 
--- module.on_gui_selection_state_changed = function(event)
+-- M.on_gui_selection_state_changed = function(event)
 --     -- Validation of data
 -- 	local gui = event.element
 -- 	if not (gui and gui.valid) then return end
--- 	local player = game.players[event.player_index]
+-- 	local player = game.get_player(event.player_index)
 -- 	if not (player and player.valid) then return end
 -- 	local parent = gui.parent
 -- 	if not parent then return end
 -- 	if not (parent.name == "to_force" and parent.name == "main_table") then return end
 -- end
 
-return module
+return M

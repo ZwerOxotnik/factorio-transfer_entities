@@ -1,6 +1,6 @@
 --[[
 
-Copyright (c) 2019, 2021 ZwerOxotnik <zweroxotnik@gmail.com>
+Copyright (c) 2019, 2021, 2024 ZwerOxotnik <zweroxotnik@gmail.com>
 Licensed under the MIT licence;
 Author: ZwerOxotnik
 
@@ -14,64 +14,39 @@ Homepage: https://forums.factorio.com/viewtopic.php?f=190&t=67245
 -- TODO: remove/replace "Event listener" mod with "zk-lib" etc
 
 local transfer_entities_tool = require("shared").transfer_entities_tools.transfer_entities_tool
-local data =
+local __mod_data =
 {
 	players = {}
 }
 
 local gui = require("transfer_entities/gui")
-local module = {}
-module.events = {}
+local M = {}
+M.events = {}
 
-local get_event
-if event_listener then
-	get_event = function(event)
-		return defines.events[event] or event
-	end
-else
-	get_event = function(event)
-		if type(event) == "number" then
-			return event
-		else
-			return defines.events[event]
-		end
-	end
+M.on_init = function()
+	storage.transfer_entities = __mod_data
 end
 
--- This function for compatibility with "Event listener" module and into other modules
-local function put_event(event, func)
-	event = get_event(event)
-	if event then
-		module.events[event] = func
-		return true
-	else
-		log("That event is nil")
-		-- error("That event is nil")
-	end
-	return false
+M.on_load = function()
+	__mod_data = storage.transfer_entities
 end
 
-module.on_init = function()
-	global.transfer_entities = data
-end
-
-module.on_load = function()
-	data = global.transfer_entities
-end
-
-local function delete_selected_entities(event)
-	if not data.players[event.player_index] then return end
-	data.players[event.player_index].transfer_entities = nil
-	local player = game.players[event.player_index]
+function M.delete_selected_entities(event)
+	local player_index = event.player_index
+	if not __mod_data.players[player_index] then return end
+	__mod_data.players[player_index].transfer_entities = nil
+	local player = game.get_player(player_index)
 	if not (player and player.valid) then return end
+
 	gui.destroy_gui(player)
 end
 
-local function check_selected_enities(event)
+function M.check_selected_enities(event)
 	-- Validation of data
 	local item = event.item
 	if item ~= transfer_entities_tool then return end
-	local player = game.players[event.player_index]
+	local player_index = event.player_index
+	local player = game.get_player(player_index)
 	if not (player and player.valid) then return end
 	local entities = event.entities
 	if not entities then return end
@@ -100,8 +75,8 @@ local function check_selected_enities(event)
 		return
 	end
 
-	data.players[event.player_index].transfer_entities = {}
-	local transfer_entities = data.players[event.player_index].transfer_entities
+	__mod_data.players[player_index].transfer_entities = {}
+	local transfer_entities = __mod_data.players[player_index].transfer_entities
 	for entity_number, entity in pairs(entities) do
 		if entity.valid and entity.type ~= "character" then
 			transfer_entities[entity_number] = entity
@@ -116,45 +91,50 @@ local function check_selected_enities(event)
 	gui.create_gui(player)
 end
 
-local function delete_player_data(event)
-	data.players[event.player_index] = nil
+function M.delete_player_data(event)
+	__mod_data.players[event.player_index] = nil
 end
 
-local function on_player_created(event)
-	data.players[event.player_index] = {}
+function M.on_player_created(event)
+	__mod_data.players[event.player_index] = {}
 end
 
-local function on_player_joined_game(event)
+function M.on_player_joined_game(event)
 	-- Validation of data
-	local player = game.players[event.player_index]
+	local player = game.get_player(event.player_index)
 	if not (player and player.valid) then return end
 
-	data.players[event.player_index] = {}
+	__mod_data.players[event.player_index] = {}
 end
 
-local function on_runtime_mod_setting_changed(event)
+function M.on_runtime_mod_setting_changed(event)
 	if event.setting_type ~= "runtime-global" then return end
 
 	local event_name = event.setting
 	if event_name == "TE-only_online_force" or event_name == "TE-to_whom" then
 		for player_index, player in pairs(game.connected_players) do
-			data.players[player_index].transfer_entities = nil
+			__mod_data.players[player_index].transfer_entities = nil
 			gui.destroy_gui(player)
 		end
 	end
 end
 
--- put_event("on_configuration_changed", on_configuration_changed)
-put_event("on_gui_click", gui.on_gui_click)
--- put_event("on_gui_selection_state_changed", gui.on_gui_selection_state_changed)
-put_event("on_player_removed", delete_player_data)
-put_event("on_player_died", delete_selected_entities)
-put_event("on_player_created", on_player_created)
-put_event("on_player_joined_game", on_player_joined_game)
-put_event("on_player_left_game", delete_selected_entities)
-put_event("on_player_changed_force", delete_selected_entities)
-put_event("on_player_changed_surface", delete_selected_entities)
-put_event("on_player_selected_area", check_selected_enities)
-put_event("on_runtime_mod_setting_changed", on_runtime_mod_setting_changed)
 
-return module
+M.events = {
+	[defines.events.on_gui_click] = gui.on_gui_click,
+	[defines.events.on_player_removed] = gui.delete_player_data,
+	[defines.events.on_player_joined_game] = M.on_player_joined_game,
+	[defines.events.on_player_created]     = M.on_player_created,
+	[defines.events.on_player_died]            = M.delete_selected_entities,
+	[defines.events.on_player_left_game]       = M.delete_selected_entities,
+	[defines.events.on_player_changed_force]   = M.delete_selected_entities,
+	[defines.events.on_player_changed_surface] = M.delete_selected_entities,
+	[defines.events.on_player_selected_area]   = M.delete_selected_entities,
+	[defines.events.on_runtime_mod_setting_changed] = M.on_runtime_mod_setting_changed,
+	[defines.events.on_player_selected_area] = M.check_selected_enities,
+	-- [defines.events.on_configuration_changed] = M.on_configuration_changed,
+	-- [defines.events.on_gui_selection_state_changed] = gui.on_gui_selection_state_changed,
+}
+
+
+return M
