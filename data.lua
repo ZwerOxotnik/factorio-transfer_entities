@@ -1,4 +1,4 @@
--- Copyright (c) 2019, 2021 ZwerOxotnik <zweroxotnik@gmail.com>
+-- Copyright (c) 2019, 2021, 2026 ZwerOxotnik <zweroxotnik@gmail.com>
 -- Licensed under the MIT licence;
 
 local util = require("data/util/te_util")
@@ -18,11 +18,15 @@ local transfer_entities_tool = {
 		border_color = {1, 1, 1},
 		mode = {"blueprint"},
 		cursor_box_type = "copy",
+		ignore_cannot_select_tiles = true,
+		ignore_cannot_select_entities = true,
 	},
 	alt_select = {
 		border_color = {0, 1, 0},
 		mode = {"blueprint"},
 		cursor_box_type = "copy",
+		ignore_cannot_select_tiles = true,
+		ignore_cannot_select_entities = true,
 	},
 	icon = path .. "transfer_entities.png",
 	icon_size = 128,
